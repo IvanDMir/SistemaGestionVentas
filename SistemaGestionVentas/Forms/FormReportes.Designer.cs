@@ -265,24 +265,24 @@ namespace SistemaGestionVentas.Forms
             panelBottom.Controls.Add(btnCerrar);
             panelBottom.Controls.Add(btnActualizar);
             panelBottom.Dock = DockStyle.Bottom;
-            panelBottom.Location = new Point(0, 506);
+            panelBottom.Location = new Point(0, 494);
             panelBottom.Name = "panelBottom";
-            panelBottom.Size = new Size(900, 44);
+            panelBottom.Size = new Size(900, 56);
             //
             // btnActualizar
             //
-            btnActualizar.Location = new Point(12, 8);
+            btnActualizar.Location = new Point(16, 12);
             btnActualizar.Name = "btnActualizar";
-            btnActualizar.Size = new Size(140, 28);
+            btnActualizar.Size = new Size(150, 34);
             btnActualizar.Text = "Actualizar todo";
             btnActualizar.Click += btnActualizar_Click;
             //
             // btnCerrar
             //
             btnCerrar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnCerrar.Location = new Point(798, 8);
+            btnCerrar.Location = new Point(734, 12);
             btnCerrar.Name = "btnCerrar";
-            btnCerrar.Size = new Size(90, 28);
+            btnCerrar.Size = new Size(100, 34);
             btnCerrar.Text = "Cerrar";
             btnCerrar.Click += btnCerrar_Click;
             //
@@ -290,7 +290,7 @@ namespace SistemaGestionVentas.Forms
             //
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(900, 550);
+            ClientSize = new Size(900, 562);
             Controls.Add(tabs);
             Controls.Add(panelBottom);
             Name = "FormReportes";

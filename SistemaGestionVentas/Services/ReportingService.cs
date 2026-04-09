@@ -47,35 +47,45 @@ public class ReportingService
     public decimal GetInventoryTotalValue()
     {
         using var ctx = new AppDbContext(_options);
+        // SQLite + EF no aplican Sum sobre decimal en servidor; sumamos en cliente.
         return ctx.Products.AsNoTracking()
-            .Sum(p => (decimal?)p.StockQuantity * p.CostPrice) ?? 0m;
+            .Select(p => new { p.StockQuantity, p.CostPrice })
+            .AsEnumerable()
+            .Sum(p => p.StockQuantity * p.CostPrice);
     }
 
     /// <summary>Unidades vendidas por producto (solo movimientos tipo Venta).</summary>
     public List<MovementStatRow> GetTopSold(int take = 20)
     {
         using var ctx = new AppDbContext(_options);
-        return (
+        // Proyección a tipo anónimo + ToList: EF 9 / SQLite no traduce bien new MovementStatRow(...) tras GroupBy.
+        var raw = (
             from m in ctx.StockMovements.AsNoTracking()
             join p in ctx.Products.AsNoTracking() on m.ProductId equals p.Id
             where m.Type == MovementType.Venta
             group m by new { p.Id, p.Name } into g
-            select new MovementStatRow(g.Key.Id, g.Key.Name, g.Sum(x => x.Quantity))
+            select new { g.Key.Id, g.Key.Name, TotalUnits = g.Sum(x => x.Quantity) }
         ).OrderByDescending(x => x.TotalUnits).Take(take).ToList();
+
+        return raw.ConvertAll(x => new MovementStatRow(x.Id, x.Name, x.TotalUnits));
     }
 
     /// <summary>Total de unidades en movimientos que sacan stock (salida, venta, ajuste negativo).</summary>
     public List<MovementStatRow> GetTopOutgoingMovementVolume(int take = 20)
     {
-        var outgoing = new[] { MovementType.Salida, MovementType.Venta, MovementType.AjusteNegativo };
         using var ctx = new AppDbContext(_options);
-        return (
+        // Sin Contains sobre array en memoria: mejor traducción SQL.
+        var raw = (
             from m in ctx.StockMovements.AsNoTracking()
             join p in ctx.Products.AsNoTracking() on m.ProductId equals p.Id
-            where outgoing.Contains(m.Type)
+            where m.Type == MovementType.Salida
+                  || m.Type == MovementType.Venta
+                  || m.Type == MovementType.AjusteNegativo
             group m by new { p.Id, p.Name } into g
-            select new MovementStatRow(g.Key.Id, g.Key.Name, g.Sum(x => x.Quantity))
+            select new { g.Key.Id, g.Key.Name, TotalUnits = g.Sum(x => x.Quantity) }
         ).OrderByDescending(x => x.TotalUnits).Take(take).ToList();
+
+        return raw.ConvertAll(x => new MovementStatRow(x.Id, x.Name, x.TotalUnits));
     }
 
     public List<MovementHistoryRow> GetMovementHistory(int? productId, DateTime? fromUtc, DateTime? toUtc)
@@ -108,20 +118,26 @@ public class ReportingService
     public List<MarginRow> GetMarginByProduct()
     {
         using var ctx = new AppDbContext(_options);
-        var sales = (
-            from m in ctx.StockMovements.AsNoTracking()
-            join p in ctx.Products.AsNoTracking() on m.ProductId equals p.Id
-            where m.Type == MovementType.Venta
-            group m by new { p.Id, p.Name } into g
-            select new
+        // SQLite + EF no aplican Sum sobre expresiones decimal; agrupamos en memoria.
+        var ventas = ctx.StockMovements.AsNoTracking()
+            .Where(m => m.Type == MovementType.Venta)
+            .Join(
+                ctx.Products.AsNoTracking(),
+                m => m.ProductId,
+                p => p.Id,
+                (m, p) => new { p.Id, p.Name, m.UnitSalePrice, m.Quantity, m.UnitCostSnapshot })
+            .AsEnumerable()
+            .GroupBy(x => new { x.Id, x.Name })
+            .Select(g => new
             {
                 g.Key.Id,
                 g.Key.Name,
                 Revenue = g.Sum(x => x.UnitSalePrice * x.Quantity),
                 Cost = g.Sum(x => x.UnitCostSnapshot * x.Quantity)
-            }).ToList();
+            })
+            .ToList();
 
-        return sales
+        return ventas
             .Select(s =>
             {
                 var profit = s.Revenue - s.Cost;

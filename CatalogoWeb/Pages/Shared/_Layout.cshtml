@@ -1,0 +1,84 @@
+@using Microsoft.Extensions.Options
+@using CatalogoWeb.Options
+@inject IOptions<SiteOptions> SiteOptions
+@{
+    var site = SiteOptions.Value;
+    var siteName = string.IsNullOrWhiteSpace(site.Name) ? "Tucumán Tecnología" : site.Name;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] != null ? $"{ViewData["Title"]} · {siteName}" : siteName)</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CatalogoWeb.styles.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100 catalogo-body">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark border-bottom catalogo-nav mb-3">
+            <div class="container">
+                <a class="navbar-brand fw-semibold" asp-area="" asp-page="/Index">@siteName</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Menú">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Index">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Catalog/Index">Catálogo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Sugerir">Sugerir producto</a>
+                        </li>
+                        @if (!string.IsNullOrWhiteSpace(site.WhatsAppUrl))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@site.WhatsAppUrl" target="_blank" rel="noopener noreferrer">@site.WhatsAppLabel</a>
+                            </li>
+                        }
+                    </ul>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-page="/Admin/Index">Panel</a>
+                            </li>
+                            <li class="nav-item">
+                                <form class="d-inline" method="post" asp-page="/Admin/Logout">
+                                    <button type="submit" class="btn btn-link nav-link py-0">Salir</button>
+                                </form>
+                            </li>
+                        </ul>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container flex-grow-1 pb-4">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted mt-auto py-3 catalogo-footer">
+        <div class="container small d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <span>&copy; @DateTime.UtcNow.Year — @siteName</span>
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <a class="admin-foot-link" asp-page="/Admin/Login" title="Acceso interno" aria-label="Acceso interno">·</a>
+            }
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

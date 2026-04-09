@@ -1,0 +1,15 @@
+@page
+@model CatalogoWeb.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Panel";
+    Layout = "_Layout";
+}
+
+<h1 class="h3 mb-4">Panel de administración</h1>
+<p class="text-muted small mb-4">
+    Los <strong>productos del catálogo</strong> se cargan y editan en el programa de escritorio <strong>SistemaGestionVentas</strong> (usa el mismo archivo <code>ventas.db</code>). Aquí solo gestionás las sugerencias que envía el público y tu sesión.
+</p>
+<ul class="list-unstyled d-grid gap-2">
+    <li><a class="btn btn-outline-primary text-start" asp-page="/Admin/Suggestions/Index">Sugerencias del público</a></li>
+    <li><a class="btn btn-outline-secondary text-start" asp-page="/Index">Ver sitio público</a></li>
+</ul>

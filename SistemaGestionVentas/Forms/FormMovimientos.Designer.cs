@@ -43,7 +43,7 @@ namespace SistemaGestionVentas.Forms
             cboProducto.FormattingEnabled = true;
             cboProducto.Location = new Point(12, 33);
             cboProducto.Name = "cboProducto";
-            cboProducto.Size = new Size(400, 23);
+            cboProducto.Size = new Size(420, 25);
             cboProducto.SelectedIndexChanged += cboProducto_SelectedIndexChanged;
             //
             // lblTipo
@@ -60,7 +60,7 @@ namespace SistemaGestionVentas.Forms
             cboTipo.FormattingEnabled = true;
             cboTipo.Location = new Point(12, 83);
             cboTipo.Name = "cboTipo";
-            cboTipo.Size = new Size(400, 23);
+            cboTipo.Size = new Size(420, 25);
             cboTipo.SelectedIndexChanged += cboTipo_SelectedIndexChanged;
             //
             // lblCantidad
@@ -108,21 +108,21 @@ namespace SistemaGestionVentas.Forms
             //
             txtNota.Location = new Point(12, 183);
             txtNota.Name = "txtNota";
-            txtNota.Size = new Size(400, 23);
+            txtNota.Size = new Size(420, 23);
             //
             // btnRegistrar
             //
-            btnRegistrar.Location = new Point(12, 220);
+            btnRegistrar.Location = new Point(12, 224);
             btnRegistrar.Name = "btnRegistrar";
-            btnRegistrar.Size = new Size(120, 32);
+            btnRegistrar.Size = new Size(140, 38);
             btnRegistrar.Text = "Registrar";
             btnRegistrar.Click += btnRegistrar_Click;
             //
             // btnCerrar
             //
-            btnCerrar.Location = new Point(292, 220);
+            btnCerrar.Location = new Point(292, 224);
             btnCerrar.Name = "btnCerrar";
-            btnCerrar.Size = new Size(120, 32);
+            btnCerrar.Size = new Size(140, 38);
             btnCerrar.Text = "Cerrar";
             btnCerrar.Click += btnCerrar_Click;
             //
@@ -130,7 +130,7 @@ namespace SistemaGestionVentas.Forms
             //
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(434, 272);
+            ClientSize = new Size(456, 288);
             Controls.Add(btnCerrar);
             Controls.Add(btnRegistrar);
             Controls.Add(txtNota);

@@ -1,0 +1,17 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="py-4 py-md-5">
+    <p class="text-uppercase small text-muted mb-2">Catálogo de referencia</p>
+    <h1 class="display-6 mb-3">Conocé lo que podés encontrar</h1>
+    <p class="lead text-muted mb-4">
+        Explorá el catálogo para ver productos y precios orientativos. No hay compra en esta web: es solo para que sepas qué ofrecemos.
+    </p>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary btn-lg" asp-page="/Catalog/Index">Ver catálogo</a>
+        <a class="btn btn-outline-secondary btn-lg" asp-page="/Sugerir">Sugerir un producto</a>
+    </div>
+</div>

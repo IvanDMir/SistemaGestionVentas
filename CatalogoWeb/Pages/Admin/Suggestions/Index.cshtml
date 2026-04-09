@@ -1,0 +1,43 @@
+@page
+@model CatalogoWeb.Pages.Admin.Suggestions.IndexModel
+@{
+    ViewData["Title"] = "Sugerencias";
+    Layout = "_Layout";
+}
+
+<h1 class="h3 mb-4">Sugerencias del público</h1>
+
+@if (Model.Items.Count == 0)
+{
+    <p class="text-muted">Aún no hay sugerencias.</p>
+}
+else
+{
+    <div class="vstack gap-4">
+        @foreach (var s in Model.Items)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div>
+                            <p class="mb-1">@s.Message</p>
+                            <p class="mb-1 small text-muted">
+                                <a href="@s.MercadoLibreUrl" target="_blank" rel="noopener noreferrer">Ver en Mercado Libre</a>
+                            </p>
+                            @if (!string.IsNullOrEmpty(s.Contact))
+                            {
+                                <p class="mb-0 small">Contacto: @s.Contact</p>
+                            }
+                            <p class="mb-0 small text-muted">@s.CreatedAt.ToLocalTime().ToString("g")</p>
+                        </div>
+                        <form method="post" asp-page="Delete" asp-route-id="@s.Id" class="flex-shrink-0">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Borrar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<p class="mt-4"><a asp-page="/Admin/Index">← Volver al panel</a></p>

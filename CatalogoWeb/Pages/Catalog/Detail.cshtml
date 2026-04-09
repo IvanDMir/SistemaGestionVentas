@@ -1,0 +1,43 @@
+@page "{id:int}"
+@model CatalogoWeb.Pages.Catalog.DetailModel
+@{
+    var item = Model.Product!;
+    var cult = System.Globalization.CultureInfo.GetCultureInfo("es-AR");
+}
+
+<div class="row g-4">
+    @if (item.ImageData is { Length: > 0 })
+    {
+        <div class="col-md-5">
+            <img src="@Url.Page("/Catalog/ProductImage", null, new { id = item.Id })" class="img-fluid rounded shadow-sm" alt="@item.Name" />
+        </div>
+    }
+    <div class="col-md-7">
+        <h1 class="h2">@item.Name</h1>
+        @if (!string.IsNullOrEmpty(item.VariantLabel))
+        {
+            <p class="lead text-muted">@item.VariantLabel</p>
+        }
+        @if (item.ProductGroup != null)
+        {
+            <p><span class="badge text-bg-secondary">@item.ProductGroup.Name</span></p>
+        }
+        <p class="fs-5 mb-2">
+            <span class="fw-semibold">@item.ListSalePrice.ToString("C", cult)</span>
+            <span class="text-muted small">precio de lista</span>
+        </p>
+        <p class="small">
+            @if (item.StockQuantity > 0)
+            {
+                <span class="text-success">Disponible (stock interno; consultar en tienda).</span>
+            }
+            else
+            {
+                <span class="text-muted">Sin stock al momento.</span>
+            }
+        </p>
+        <p class="mt-4">
+            <a class="btn btn-outline-primary" asp-page="/Catalog/Index">← Volver al catálogo</a>
+        </p>
+    </div>
+</div>

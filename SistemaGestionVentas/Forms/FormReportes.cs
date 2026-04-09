@@ -1,4 +1,5 @@
 using SistemaGestionVentas.Services;
+using SistemaGestionVentas.UI;
 
 namespace SistemaGestionVentas.Forms;
 
@@ -21,6 +22,23 @@ public partial class FormReportes : Form
 
     private void FormReportes_Load(object sender, EventArgs e)
     {
+        UiTheme.ApplyForm(this);
+        UiTheme.StyleFooterPanel(panelBottom);
+        UiTheme.StylePrimaryButton(btnActualizar);
+        UiTheme.StyleMutedButton(btnCerrar);
+        UiTheme.StyleSecondaryButton(btnHistorial);
+        UiTheme.StyleTabControl(tabs);
+        UiTheme.StyleCombo(cboProductoHistorial);
+        foreach (TabPage p in tabs.TabPages)
+        {
+            p.UseVisualStyleBackColor = false;
+            p.BackColor = UiTheme.Background;
+        }
+        foreach (var l in new[] { lblProdHist, lblDesde, lblHasta })
+            UiTheme.StyleFieldLabel(l);
+        lblValorTotal.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        lblValorTotal.ForeColor = UiTheme.Primary;
+
         cboProductoHistorial.Items.Clear();
         cboProductoHistorial.Items.Add(new ProductListItem(null, "(Todos)"));
         foreach (var p in _products.GetAll())
@@ -41,6 +59,16 @@ public partial class FormReportes : Form
         RefreshMasMovidos();
         RefreshHistorial();
         RefreshMargen();
+        StyleReportGrids();
+    }
+
+    private void StyleReportGrids()
+    {
+        UiTheme.StyleDataGridView(gridStockBajo);
+        UiTheme.StyleDataGridView(gridVendidos);
+        UiTheme.StyleDataGridView(gridMovidos);
+        UiTheme.StyleDataGridView(gridHistorial);
+        UiTheme.StyleDataGridView(gridMargen);
     }
 
     private void RefreshStockBajo()

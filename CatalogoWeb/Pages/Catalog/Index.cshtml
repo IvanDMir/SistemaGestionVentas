@@ -1,0 +1,81 @@
+@page
+@model CatalogoWeb.Pages.Catalog.IndexModel
+@{
+    ViewData["Title"] = "Catálogo";
+    var cult = System.Globalization.CultureInfo.GetCultureInfo("es-AR");
+}
+
+<h1 class="h3 mb-3">Catálogo</h1>
+<p class="text-muted small">Los datos provienen del mismo archivo de base que el programa de gestión de ventas.</p>
+
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-8 col-lg-6">
+        <label class="visually-hidden" for="q">Buscar</label>
+        <input class="form-control" type="search" id="q" name="q" value="@Model.Search" placeholder="Buscar por nombre, variante o línea…" />
+    </div>
+    <div class="col-auto d-flex align-items-end">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.Search))
+    {
+        <div class="col-12">
+            <a class="small" asp-page="/Catalog/Index">Limpiar búsqueda</a>
+        </div>
+    }
+</form>
+
+@if (Model.Items.Count == 0)
+{
+    <p class="text-muted">No hay productos para mostrar@(string.IsNullOrWhiteSpace(Model.Search) ? "" : " con ese criterio"). Cargá productos en el programa de escritorio o revisá el filtro de stock en configuración.</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+        @foreach (var item in Model.Items)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 catalog-card">
+                    @if (item.ImageData is { Length: > 0 })
+                    {
+                        <a asp-page="/Catalog/Detail" asp-route-id="@item.Id" class="ratio ratio-4x3 catalog-thumb-wrap">
+                            <img src="@Url.Page("/Catalog/ProductImage", null, new { id = item.Id })" class="card-img-top catalog-thumb" alt="@item.Name" />
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="ratio ratio-4x3 catalog-thumb-wrap d-flex align-items-center justify-content-center bg-light">
+                            <span class="text-muted small">Sin imagen</span>
+                        </div>
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <h2 class="h6 card-title">
+                            <a class="text-decoration-none text-body" asp-page="/Catalog/Detail" asp-route-id="@item.Id">@item.Name</a>
+                        </h2>
+                        @if (!string.IsNullOrEmpty(item.VariantLabel))
+                        {
+                            <p class="small text-muted mb-1">@item.VariantLabel</p>
+                        }
+                        @if (item.ProductGroup != null)
+                        {
+                            <p class="small mb-2"><span class="badge text-bg-light">@item.ProductGroup.Name</span></p>
+                        }
+                        <p class="small mb-1">
+                            @if (item.StockQuantity > 0)
+                            {
+                                <span class="text-success">En stock</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Sin stock</span>
+                            }
+                        </p>
+                        <p class="mt-auto mb-0 small">
+                            <span class="fw-semibold">@item.ListSalePrice.ToString("C", cult)</span>
+                            <span class="text-muted">(lista)</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

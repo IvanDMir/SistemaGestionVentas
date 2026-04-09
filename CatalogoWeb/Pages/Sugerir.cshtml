@@ -1,0 +1,38 @@
+@page
+@model CatalogoWeb.Pages.SugerirModel
+@{
+    ViewData["Title"] = "Sugerir un producto";
+}
+
+<h1 class="h3 mb-3">Sugerir un producto</h1>
+<p class="text-muted">Si conocés algo que podríamos vender, contanos y compartí un link de <strong>Mercado Libre</strong> como referencia (no es una compra desde esta web).</p>
+
+@if (Model.Sent)
+{
+    <div class="alert alert-success">¡Gracias! Recibimos tu sugerencia.</div>
+}
+
+<form method="post" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-12">
+        <label asp-for="Input.Message" class="form-label"></label>
+        <textarea asp-for="Input.Message" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Input.Message" class="text-danger small"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Input.MercadoLibreUrl" class="form-label"></label>
+        <input asp-for="Input.MercadoLibreUrl" class="form-control" type="url" placeholder="https://articulo.mercadolibre.com.ar/..." />
+        <span asp-validation-for="Input.MercadoLibreUrl" class="text-danger small"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Input.Contact" class="form-label"></label>
+        <input asp-for="Input.Contact" class="form-control" />
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Enviar sugerencia</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

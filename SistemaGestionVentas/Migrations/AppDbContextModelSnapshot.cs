@@ -27,6 +27,9 @@ namespace SistemaGestionVentas.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
 
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("BLOB");
+
                     b.Property<decimal>("ListSalePrice")
                         .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
@@ -39,18 +42,37 @@ namespace SistemaGestionVentas.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Sku")
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("ProductGroupId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("VariantLabel")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Sku");
+                    b.HasIndex("ProductGroupId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("SistemaGestionVentas.Models.ProductGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductGroups");
                 });
 
             modelBuilder.Entity("SistemaGestionVentas.Models.StockMovement", b =>
@@ -90,6 +112,16 @@ namespace SistemaGestionVentas.Migrations
                     b.ToTable("StockMovements");
                 });
 
+            modelBuilder.Entity("SistemaGestionVentas.Models.Product", b =>
+                {
+                    b.HasOne("SistemaGestionVentas.Models.ProductGroup", "ProductGroup")
+                        .WithMany("Products")
+                        .HasForeignKey("ProductGroupId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ProductGroup");
+                });
+
             modelBuilder.Entity("SistemaGestionVentas.Models.StockMovement", b =>
                 {
                     b.HasOne("SistemaGestionVentas.Models.Product", "Product")
@@ -104,6 +136,11 @@ namespace SistemaGestionVentas.Migrations
             modelBuilder.Entity("SistemaGestionVentas.Models.Product", b =>
                 {
                     b.Navigation("Movements");
+                });
+
+            modelBuilder.Entity("SistemaGestionVentas.Models.ProductGroup", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
